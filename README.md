@@ -1,117 +1,82 @@
 # CopyToAgent
 
-[![Twitter Follow](https://img.shields.io/badge/follow-%40JBPlatform-1DA1F2?logo=twitter)](https://twitter.com/JBPlatform)
-[![Developers Forum](https://img.shields.io/badge/JetBrains%20Platform-Join-blue)][jb:forum]
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![IntelliJ Platform](https://img.shields.io/badge/IntelliJ%20IDEA-2025.3+-purple.svg)](https://plugins.jetbrains.com)
 
-## Plugin structure
+Copy file paths with line number references to your clipboard, formatted for Claude, OpenCode, and other AI coding assistants.
 
-A generated project contains the following content structure:
+## Features
 
+- Copy file path with line references from the editor (e.g. `@src/Main.kt#L10-20`)
+- Supports two formats:
+  - **Claude**: `@path/file#L10-20`
+  - **OpenCode**: `@path/file#10-20`
+- Relative or absolute path mode
+- Without selection: copies file path only (no line numbers)
+- Configurable notification on copy
+
+## Installation
+
+### From JetBrains Marketplace
+
+1. Open **Settings → Plugins → Marketplace**
+2. Search for **Copy To Agent**
+3. Click **Install**
+
+### Manual Installation
+
+1. Download the `.zip` file from [Releases](https://github.com/baibaibaixiong23/CopyToAgent/releases)
+2. Open **Settings → Plugins → ⚙️ → Install Plugin from Disk...**
+3. Select the downloaded file
+
+## Usage
+
+1. Open a file in the editor
+2. (Optional) Select lines of code
+3. Press **Ctrl+Alt+U** (or right-click → **Copy Context Link**)
+4. Paste into your AI assistant
+
+### Examples
+
+| Selection | Copied Text (Claude format) |
+|-----------|----------------------------|
+| No selection | `@src/Main.kt` |
+| Single line (line 5) | `@src/Main.kt#L5` |
+| Lines 10-20 | `@src/Main.kt#L10-20` |
+
+## Configuration
+
+**Settings → Tools → CopyToAgent**
+
+| Option | Values | Default | Description |
+|--------|--------|---------|-------------|
+| Format | `claude`, `opencode` | `claude` | Line number reference format |
+| Path Type | `relative`, `absolute` | `relative` | Path relative to project root or absolute |
+| Show Notification | checkbox | off | Show balloon notification on copy |
+
+> Changes require IDE restart to take effect.
+
+## Building from Source
+
+```bash
+# Set JDK 21 path (adjust for your environment)
+export JAVA_HOME=/path/to/jdk-21
+
+# Build plugin
+./gradlew buildPlugin
+
+# Run sandbox IDE to test
+./gradlew runIde
+
+# Run tests
+./gradlew test
+
+# Verify plugin compatibility
+./gradlew verifyPlugin
 ```
-.
-├── .run/                   Predefined Run/Debug Configurations
-├── build/                  Output build directory
-├── gradle
-│   ├── wrapper/            Gradle Wrapper
-│   ├── libs.versions.toml  Version catalog
-├── src                     Plugin sources
-│   ├── main
-│   │   ├── kotlin/         Kotlin production sources
-│   │   └── resources/      Resources - plugin.xml, icons, messages
-├── .gitignore              Git ignoring rules
-├── build.gradle.kts        Gradle build configuration
-├── gradle.properties       Gradle configuration properties
-├── gradlew                 *nix Gradle Wrapper script
-├── gradlew.bat             Windows Gradle Wrapper script
-├── README.md               README
-└── settings.gradle.kts     Gradle project settings
-```
 
-In addition to the configuration files, the most crucial part is the `src` directory, which contains our implementation
-and the manifest for our plugin – [plugin.xml][file:plugin.xml].
+The built plugin zip will be in `build/distributions/`.
 
-> [!NOTE]
-> To use Java in your plugin, create the `/src/main/java` directory.
+## License
 
-## Plugin configuration file
-
-The plugin configuration file is a [plugin.xml][file:plugin.xml] file located in the `src/main/resources/META-INF`
-directory.
-It provides general information about the plugin, its dependencies, extensions, and listeners.
-
-You can read more about this file in the [Plugin Configuration File][docs:plugin.xml] section of our documentation.
-
-If you're still not quite sure what this is all about, read [Introduction to IntelliJ Platform][docs:intro].
-
-## Predefined Run/Debug configurations
-
-Within the default project structure, there is a `.run` directory provided containing predefined *Run/Debug
-configurations* that expose corresponding Gradle tasks:
-
-| Configuration name | Description                                                                                                                                                                         |
-|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Run Plugin         | Runs [`:runIde`][gh:intellij-platform-gradle-plugin-runIde] IntelliJ Platform Gradle Plugin task. Use the *Debug* icon for plugin debugging.                                        |
-| Run Tests          | Runs [`:test`][gradle:lifecycle-tasks] Gradle task.                                                                                                                                 |
-| Run Verifications  | Runs [`:verifyPlugin`][gh:intellij-platform-gradle-plugin-verifyPlugin] IntelliJ Platform Gradle Plugin task to check the plugin compatibility against the specified IntelliJ IDEs. |
-
-> [!NOTE]
-> You can find the logs from the running task in the `idea.log` tab.
-
-## Publishing the plugin
-
-> [!TIP]
-> Make sure to follow all guidelines listed in [Publishing a Plugin][docs:publishing] to follow all recommended and
-> required steps.
-
-Releasing a plugin to [JetBrains Marketplace](https://plugins.jetbrains.com) is a straightforward operation that uses
-the `publishPlugin` Gradle task provided by
-the [intellij-platform-gradle-plugin][gh:intellij-platform-gradle-plugin-docs].
-
-You can also upload the plugin to the [JetBrains Plugin Repository](https://plugins.jetbrains.com/plugin/upload)
-manually via UI.
-
-## Useful links
-
-- [IntelliJ Platform SDK Plugin SDK][docs]
-- [IntelliJ Platform Gradle Plugin Documentation][gh:intellij-platform-gradle-plugin-docs]
-- [IntelliJ Platform Explorer][jb:ipe]
-- [JetBrains Marketplace Quality Guidelines][jb:quality-guidelines]
-- [IntelliJ Platform UI Guidelines][jb:ui-guidelines]
-- [JetBrains Marketplace Paid Plugins][jb:paid-plugins]
-- [IntelliJ SDK Code Samples][gh:code-samples]
-
-[docs]: https://plugins.jetbrains.com/docs/intellij
-
-[docs:intro]: https://plugins.jetbrains.com/docs/intellij/intellij-platform.html?from=IJPluginTemplate
-
-[docs:plugin.xml]: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html?from=IJPluginTemplate
-
-[docs:publishing]: https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate
-
-[file:plugin.xml]: ./src/main/resources/META-INF/plugin.xml
-
-[gh:code-samples]: https://github.com/JetBrains/intellij-sdk-code-samples
-
-[gh:intellij-platform-gradle-plugin]: https://github.com/JetBrains/intellij-platform-gradle-plugin
-
-[gh:intellij-platform-gradle-plugin-docs]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
-
-[gh:intellij-platform-gradle-plugin-runIde]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-tasks.html#runIde
-
-[gh:intellij-platform-gradle-plugin-verifyPlugin]: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-tasks.html#verifyPlugin
-
-[gradle:lifecycle-tasks]: https://docs.gradle.org/current/userguide/java_plugin.html#lifecycle_tasks
-
-[jb:github]: https://github.com/JetBrains/.github/blob/main/profile/README.md
-
-[jb:forum]: https://platform.jetbrains.com/
-
-[jb:quality-guidelines]: https://plugins.jetbrains.com/docs/marketplace/quality-guidelines.html
-
-[jb:paid-plugins]: https://plugins.jetbrains.com/docs/marketplace/paid-plugins-marketplace.html
-
-[jb:quality-guidelines]: https://plugins.jetbrains.com/docs/marketplace/quality-guidelines.html
-
-[jb:ipe]: https://jb.gg/ipe
-
-[jb:ui-guidelines]: https://jetbrains.github.io/ui
+This project is licensed under the [Apache License 2.0](LICENSE).

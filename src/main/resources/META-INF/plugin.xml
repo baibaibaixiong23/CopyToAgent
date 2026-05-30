@@ -8,7 +8,7 @@
     <name>Copy To Agent</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor url="https://github.com/zhangtingfeng">ztf</vendor>
+    <vendor email="stefan.zhang.tf@gmail.com" url="https://github.com/baibaibaixiong23">ztf</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
