@@ -1,0 +1,61 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>ztf.extend.CopyToAgent</id>
+
+    <!-- Public plugin name should be written in Title Case.
+     Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-name -->
+    <name>Copy To Agent</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor url="https://github.com/zhangtingfeng">ztf</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
+    <description><![CDATA[
+        复制文件路径（带行号引用）到剪贴板，用于 Claude、OpenCode 等 AI 助手的上下文引用。<br><br>
+        <b>使用方式：</b>在编辑器中选中代码，按 <b>Ctrl+Alt+U</b> 或右键选择 <b>复制上下文链接</b>。<br>
+        复制的链接（如 <code>@src/Main.kt#L10-20</code>）可直接粘贴到 AI 对话中，提供精准的代码上下文。<br><br>
+        <b>功能特性：</b><br>
+        - 支持 Claude（<code>#L10-20</code>）和 OpenCode（<code>#10-20</code>）格式<br>
+        - 相对路径或绝对路径模式<br>
+        - 未选中代码时仅复制文件路径（不含行号）<br><br>
+        配置入口：<b>设置 → 工具 → 复制到 AI 助手</b>。<br>
+        <i>修改配置后需要重启 IDE 生效。</i>
+        ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.lang</depends>
+
+    <resource-bundle>messages.MyMessageBundle</resource-bundle>
+
+    <!-- Extensions defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+            serviceImplementation="ztf.extend.CopyToAgentSettings"/>
+        <applicationConfigurable
+            parentId="tools"
+            instance="ztf.extend.CopyToAgentConfigurable"
+            id="ztf.extend.CopyToAgentConfigurable"
+            displayName="复制到 AI 助手"/>
+        <notificationGroup id="CopyToAgent"
+                           displayType="BALLOON"
+                           isLogByDefault="false"/>
+    </extensions>
+
+    <actions>
+        <action id="ztf.extend.CopyContextLink"
+                class="ztf.extend.CopyContextAction"
+                text="复制AI引用"
+                description="复制带行号引用的文件路径，用于 AI 助手上下文"
+                icon="/icons/copyContextLink.svg">
+            <keyboard-shortcut keymap="$default"
+                               first-keystroke="ctrl alt U"/>
+            <add-to-group group-id="EditorPopupMenu"
+                          anchor="first"/>
+        </action>
+    </actions>
+
+</idea-plugin>
