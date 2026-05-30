@@ -20,7 +20,7 @@
         - 支持 Claude（<code>#L10-20</code>）和 OpenCode（<code>#10-20</code>）格式<br>
         - 相对路径或绝对路径模式<br>
         - 未选中代码时仅复制文件路径（不含行号）<br><br>
-        配置入口：<b>设置 → 工具 → 复制到 AI 助手</b>。<br>
+        配置入口：<b>设置 → 工具 → CopyToAgent</b>。<br>
         <i>修改配置后需要重启 IDE 生效。</i>
         ]]></description>
 
@@ -39,7 +39,7 @@
             parentId="tools"
             instance="ztf.extend.CopyToAgentConfigurable"
             id="ztf.extend.CopyToAgentConfigurable"
-            displayName="复制到 AI 助手"/>
+            displayName="CopyContextLink"/>
         <notificationGroup id="CopyToAgent"
                            displayType="BALLOON"
                            isLogByDefault="false"/>
@@ -48,7 +48,7 @@
     <actions>
         <action id="ztf.extend.CopyContextLink"
                 class="ztf.extend.CopyContextAction"
-                text="复制AI引用"
+                text="CopyContextLink"
                 description="复制带行号引用的文件路径，用于 AI 助手上下文"
                 icon="/icons/copyContextLink.svg">
             <keyboard-shortcut keymap="$default"
