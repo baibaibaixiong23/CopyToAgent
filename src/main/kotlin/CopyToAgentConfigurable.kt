@@ -7,7 +7,7 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import javax.swing.DefaultComboBoxModel
 
-class CopyToAgentConfigurable : BoundConfigurable("复制到 AI 助手") {
+class CopyToAgentConfigurable : BoundConfigurable("CopyToAgent") {
 
     private val formatModel = DefaultComboBoxModel(arrayOf("claude", "opencode"))
     private val pathTypeModel = DefaultComboBoxModel(arrayOf("relative", "absolute"))
