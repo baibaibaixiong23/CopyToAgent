@@ -20,6 +20,7 @@ CopyToAgent 是一个 JetBrains IntelliJ 平台插件，功能对标 `vscodeExte
 ## 构建与开发命令
 
 ```bash
+# 设置 JDK 21 路径（根据你的环境调整）
 export JAVA_HOME=$(路径到你的 JDK 21)
 
 # 构建插件
