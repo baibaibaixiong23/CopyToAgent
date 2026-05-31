@@ -3,80 +3,82 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![IntelliJ Platform](https://img.shields.io/badge/IntelliJ%20IDEA-2025.3+-purple.svg)](https://plugins.jetbrains.com)
 
-Copy file paths with line number references to your clipboard, formatted for Claude, OpenCode, and other AI coding assistants.
+将文件路径和行号引用复制到剪贴板，格式兼容 Claude、OpenCode 等 AI 编程助手。
 
-## Features
+![插件展示](doc/view.jpg)
 
-- Copy file path with line references from the editor (e.g. `@src/Main.kt#L10-20`)
-- Supports two formats:
+## 功能特性
+
+- 从编辑器复制文件路径及行号引用（如 `@src/Main.kt#L10-20`）
+- 支持两种格式：
   - **Claude**: `@path/file#L10-20`
   - **OpenCode**: `@path/file#10-20`
-- Relative or absolute path mode
-- Without selection: copies file path only (no line numbers)
-- Configurable notification on copy
+- 相对路径或绝对路径模式
+- 无选区时仅复制文件路径（不含行号）
+- 可配置复制时是否弹出通知
 
-## Installation
+## 安装
 
-### From JetBrains Marketplace
+### 从 JetBrains Marketplace 安装
 
-1. Open **Settings → Plugins → Marketplace**
-2. Search for **Copy To Agent**
-3. Click **Install**
+1. 打开 **设置 → 插件 → Marketplace**
+2. 搜索 **Copy To Agent**
+3. 点击 **安装**
 
-### Manual Installation
+### 手动安装
 
-1. Download the `.zip` file from [Releases](https://github.com/baibaibaixiong23/CopyToAgent/releases)
-2. Open **Settings → Plugins → ⚙️ → Install Plugin from Disk...**
-3. Select the downloaded file
+1. 从 [Releases](https://github.com/baibaibaixiong23/CopyToAgent/releases) 下载 `.zip` 文件
+2. 打开 **设置 → 插件 → ⚙️ → 从磁盘安装插件...**
+3. 选择下载的文件
 
-## Usage
+## 使用方法
 
-1. Open a file in the editor
-2. (Optional) Select lines of code
-3. Press **Ctrl+Alt+U** (or right-click → **Copy Context Link**)
-4. Paste into your AI assistant
+1. 在编辑器中打开文件
+2. （可选）选中代码行
+3. 按 **Ctrl+Alt+U**（或右键 → **Copy Context Link**）
+4. 粘贴到 AI 助手中
 
-### Examples
+### 示例
 
-| Selection | Copied Text (Claude format) |
-|-----------|----------------------------|
-| No selection | `@src/Main.kt` |
-| Single line (line 5) | `@src/Main.kt#L5` |
-| Lines 10-20 | `@src/Main.kt#L10-20` |
+| 选区情况 | 复制内容（Claude 格式） |
+|----------|------------------------|
+| 无选区 | `@src/Main.kt` |
+| 单行（第 5 行） | `@src/Main.kt#L5` |
+| 第 10-20 行 | `@src/Main.kt#L10-20` |
 
-## Configuration
+## 配置
 
-**Settings → Tools → CopyToAgent**
+**设置 → 工具 → CopyToAgent**
 
-| Option | Values | Default | Description |
-|--------|--------|---------|-------------|
-| Format | `claude`, `opencode` | `claude` | Line number reference format |
-| Path Type | `relative`, `absolute` | `relative` | Path relative to project root or absolute |
-| Show Notification | checkbox | off | Show balloon notification on copy |
+| 选项 | 可选值 | 默认值 | 说明 |
+|------|--------|--------|------|
+| 格式 | `claude`, `opencode` | `claude` | 行号引用格式 |
+| 路径类型 | `relative`, `absolute` | `relative` | 相对于项目根目录或绝对路径 |
+| 显示通知 | 复选框 | 关闭 | 复制时是否弹出气泡通知 |
 
-> Changes require IDE restart to take effect.
+> 修改配置后需重启 IDE 生效。
 
-## Building from Source
+## 从源码构建
 
 ```bash
-# Set JDK 21 path (adjust for your environment)
+# 设置 JDK 21 路径（根据你的环境调整）
 export JAVA_HOME=/path/to/jdk-21
 
-# Build plugin
+# 构建插件
 ./gradlew buildPlugin
 
-# Run sandbox IDE to test
+# 运行沙盒 IDE 测试
 ./gradlew runIde
 
-# Run tests
+# 运行测试
 ./gradlew test
 
-# Verify plugin compatibility
+# 验证插件兼容性
 ./gradlew verifyPlugin
 ```
 
-The built plugin zip will be in `build/distributions/`.
+构建产物位于 `build/distributions/` 目录。
 
-## License
+## 许可证
 
-This project is licensed under the [Apache License 2.0](LICENSE).
+本项目基于 [Apache License 2.0](LICENSE) 开源。
