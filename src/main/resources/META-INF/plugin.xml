@@ -14,14 +14,13 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/best-practices-for-listing.html#plugin-description -->
     <description><![CDATA[
         复制文件路径（带行号引用）到剪贴板，用于 Claude、OpenCode 等 AI 助手的上下文引用。<br><br>
-        <b>使用方式：</b>在编辑器中选中代码，按 <b>Ctrl+Alt+U</b> 或右键选择 <b>复制上下文链接</b>。<br>
+        <b>使用方式：</b>在编辑器中选中代码，按 <b>Ctrl+Alt+U</b> 或右键选择 <b>复制AI引用</b>；也可右键标签栏复制文件路径。<br>
         复制的链接（如 <code>@src/Main.kt#L10-20</code>）可直接粘贴到 AI 对话中，提供精准的代码上下文。<br><br>
         <b>功能特性：</b><br>
         - 支持 Claude（<code>#L10-20</code>）和 OpenCode（<code>#10-20</code>）格式<br>
         - 相对路径或绝对路径模式<br>
         - 未选中代码时仅复制文件路径（不含行号）<br><br>
-        配置入口：<b>设置 → 工具 → CopyToAgent</b>。<br>
-        <i>修改配置后需要重启 IDE 生效。</i>
+        配置入口：<b>设置 → 工具 → CopyToAgent</b>。
         ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -54,6 +53,8 @@
             <keyboard-shortcut keymap="$default"
                                first-keystroke="ctrl alt U"/>
             <add-to-group group-id="EditorPopupMenu"
+                          anchor="first"/>
+            <add-to-group group-id="EditorTabPopupMenu"
                           anchor="first"/>
         </action>
     </actions>

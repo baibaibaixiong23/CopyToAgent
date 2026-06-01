@@ -24,7 +24,7 @@ CopyToAgent 是一个 JetBrains IntelliJ 平台插件，功能对标 `vscodeExte
 export JAVA_HOME=$(路径到你的 JDK 21)
 
 # 构建插件
-./gradlew buildPlugin
+./gradlew clean buildPlugin --no-build-cache --no-configuration-cache
 
 # 运行沙盒 IDE 测试插件
 ./gradlew runIde

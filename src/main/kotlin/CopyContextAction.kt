@@ -15,6 +15,7 @@
  */
 
 package ztf.extend
+import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
@@ -25,6 +26,8 @@ import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.AppExecutorUtil
 import java.util.function.Consumer
 
@@ -41,19 +44,23 @@ class CopyContextAction(
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
+    override fun update(e: AnActionEvent) {
+        val file = getFileFromContext(e)
+        e.presentation.isEnabledAndVisible = file != null
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
+        val file = getFileFromContext(e) ?: return
         val editor = CommonDataKeys.EDITOR.getData(e.dataContext)
-            ?: run {
-                notifyWarning(MyMessageBundle.message("notification.no.active.editor"))
-                return
-            }
-
-        val file = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext) ?: return
+            ?: FileEditorManager.getInstance(project).selectedTextEditor
 
         try {
             ReadAction
-                .nonBlocking<ContextLinkBuilder.Result> { buildReference(editor, file) }
+                .nonBlocking<ContextLinkBuilder.Result> {
+                    if (editor != null) buildReference(editor, file)
+                    else buildFileOnlyReference(project, file)
+                }
                 .finishOnUiThread(ModalityState.defaultModalityState()) { result ->
                     handleResult(project, result)
                 }
@@ -62,6 +69,25 @@ class CopyContextAction(
             LOG.error("Failed to copy context link", ex)
             notifyWarning(MyMessageBundle.message("notification.copy.failed"))
         }
+    }
+
+    private fun getFileFromContext(e: AnActionEvent): VirtualFile? {
+        val files = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)
+        if (!files.isNullOrEmpty()) return files[0]
+        val file = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)
+        if (file != null) return file
+        val project = e.project ?: return null
+        val selectedFiles = FileEditorManager.getInstance(project).selectedFiles
+        return if (selectedFiles.isNotEmpty()) selectedFiles[0] else null
+    }
+
+    private fun buildFileOnlyReference(
+        project: com.intellij.openapi.project.Project,
+        file: com.intellij.openapi.vfs.VirtualFile
+    ): ContextLinkBuilder.Result {
+        val settings = CopyToAgentSettings.instance.state
+        val filePath = resolveFilePath(project, file, settings.pathType)
+        return ContextLinkBuilder.buildContextLink(filePath, -1, -1, settings.format)
     }
 
     private fun buildReference(
