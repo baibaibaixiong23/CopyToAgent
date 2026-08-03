@@ -45,21 +45,24 @@ class CopyContextAction(
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
     override fun update(e: AnActionEvent) {
-        val file = getFileFromContext(e)
-        e.presentation.isEnabledAndVisible = file != null
+        val files = getFilesFromContext(e)
+        e.presentation.isEnabledAndVisible = !files.isNullOrEmpty()
     }
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val file = getFileFromContext(e) ?: return
+        val files = getFilesFromContext(e) ?: return
         val editor = CommonDataKeys.EDITOR.getData(e.dataContext)
             ?: FileEditorManager.getInstance(project).selectedTextEditor
 
         try {
             ReadAction
                 .nonBlocking<ContextLinkBuilder.Result> {
-                    if (editor != null) buildReference(editor, file)
-                    else buildFileOnlyReference(project, file)
+                    if (editor != null && files.size == 1 && !files[0].isDirectory) {
+                        buildReference(editor, files[0])
+                    } else {
+                        buildMultiFileReferences(project, files)
+                    }
                 }
                 .finishOnUiThread(ModalityState.defaultModalityState()) { result ->
                     handleResult(project, result)
@@ -71,23 +74,27 @@ class CopyContextAction(
         }
     }
 
-    private fun getFileFromContext(e: AnActionEvent): VirtualFile? {
+    private fun getFilesFromContext(e: AnActionEvent): Array<VirtualFile>? {
         val files = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)
-        if (!files.isNullOrEmpty()) return files[0]
+        if (!files.isNullOrEmpty()) return files
         val file = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)
-        if (file != null) return file
+        if (file != null) return arrayOf(file)
         val project = e.project ?: return null
         val selectedFiles = FileEditorManager.getInstance(project).selectedFiles
-        return if (selectedFiles.isNotEmpty()) selectedFiles[0] else null
+        return if (selectedFiles.isNotEmpty()) selectedFiles else null
     }
 
-    private fun buildFileOnlyReference(
+    private fun buildMultiFileReferences(
         project: com.intellij.openapi.project.Project,
-        file: com.intellij.openapi.vfs.VirtualFile
+        files: Array<VirtualFile>
     ): ContextLinkBuilder.Result {
         val settings = CopyToAgentSettings.instance.state
-        val filePath = resolveFilePath(project, file, settings.pathType)
-        return ContextLinkBuilder.buildContextLink(filePath, -1, -1, settings.format)
+        val references = files.joinToString("\n") { file ->
+            val path = resolveFilePath(project, file, settings.pathType)
+            val suffix = if (file.isDirectory && !path.endsWith("/")) "/" else ""
+            "@$path$suffix"
+        }
+        return ContextLinkBuilder.Result.Success(references)
     }
 
     private fun buildReference(
@@ -123,7 +130,12 @@ class CopyContextAction(
                 try {
                     clipboardWriter.accept(result.reference)
                     if (CopyToAgentSettings.instance.state.showNotification) {
-                        notifyInfo(MyMessageBundle.message("notification.copied", result.reference))
+                        val count = result.reference.lines().size
+                        val msg = if (count > 1)
+                            MyMessageBundle.message("notification.copied.multi", count)
+                        else
+                            MyMessageBundle.message("notification.copied", result.reference)
+                        notifyInfo(msg)
                     }
                 } catch (ex: RuntimeException) {
                     LOG.warn("Failed to write context link to clipboard", ex)
